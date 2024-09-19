@@ -24,13 +24,11 @@ def executar_simulacao():
     conexao_input = conexao_entry.get()
     entrega_input = entrega_entry.get()
 
-    # Fazer a cópia profunda da matriz de conexões e das entregas para garantir que cada algoritmo use seus próprios dados
     matriz_conexoes_original = np.array(eval(conexao_input))  
     entregas_original = eval(entrega_input)  
 
     destinos = ["A", "B", "C", "D"]  
 
-    # Cópia profunda para cada algoritmo para garantir independência
     matriz_conexoes_basico = deepcopy(matriz_conexoes_original)
     entregas_basico = deepcopy(entregas_original)
     lucro_basico, _ = calcular_lucro_basico(destinos, matriz_conexoes_basico, entregas_basico)
@@ -47,7 +45,6 @@ def executar_simulacao():
     entregas_swarm = deepcopy(entregas_original)
     lucro_swarm, _ = calcular_lucro_swarm(destinos, matriz_conexoes_swarm, entregas_swarm)
 
-    # Somar os lucros corretamente se eles forem listas de entregas
     if isinstance(lucro_basico, list):
         lucro_basico = sum([bonus for _, _, bonus in lucro_basico]) 
     if isinstance(lucro_otimizado, list):
@@ -60,7 +57,6 @@ def executar_simulacao():
     resultado_texto = f"Lucro esperado (básico): {lucro_basico}\nLucro esperado (otimizado): {lucro_otimizado}\nLucro esperado (Simulated Annealing): {lucro_sa}\nLucro esperado (Swarm): {lucro_swarm}"
     messagebox.showinfo("Resultados", resultado_texto)
 
-    # Plotar os gráficos de comparação
     plotar_graficos(lucro_basico, lucro_otimizado, lucro_sa, lucro_swarm)
 
 root = tk.Tk()
