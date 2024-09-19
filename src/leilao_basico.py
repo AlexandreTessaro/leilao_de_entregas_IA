@@ -21,30 +21,21 @@ def calcular_lucro_basico(destinos, matriz_conexoes, entregas):
     return entregas_realizadas, lucro_total
 
 def processar_entregas(conexoes, entregas):
-    # Lista para armazenar as entregas realizadas
     entregas_realizadas = []
-    tempo_atual = 0  # O tempo inicial é 0
-    lucro_total = 0  # Acumulador do lucro
+    tempo_atual = 0  
+    lucro_total = 0  
 
-    # Inicialmente, estamos no ponto A
     local_atual = 'A'
 
-    # Processar as entregas uma a uma
     for entrega in entregas:
-        # Obter dados da entrega
         tempo_saida, destino, bonus = entrega
 
-        # Verificar o tempo necessário para ir ao destino e voltar
         tempo_ate_destino = conexoes[local_atual][destino]
         tempo_retorno = conexoes[destino]['A']
 
-        # Se houver tempo disponível para realizar a entrega
         if tempo_atual + tempo_ate_destino <= tempo_saida:
-            # Atualiza o tempo atual
             tempo_atual += tempo_ate_destino + tempo_retorno
-            # Realizar a entrega
-            entregas_realizadas.append((tempo_saida, destino, bonus))
-            # Atualiza o lucro total
+
             lucro_total += bonus
 
     return entregas_realizadas, lucro_total

@@ -4,25 +4,20 @@ from src.leilao_basico import calcular_lucro_basico
 from src.leilao_otimizado import calcular_lucro_otimizado
 
 def comparar_desempenho(destinos, conexoes, entregas):
-    # Exemplo básico para comparar desempenho
     print("\nComparando desempenho...")
 
-    # Medir desempenho da versão básica
     inicio_basico = time.time()
-    _, lucro_basico = calcular_lucro_basico(destinos, conexoes, entregas)  # Pegamos apenas o lucro
+    _, lucro_basico = calcular_lucro_basico(destinos, conexoes, entregas)  
     tempo_basico = time.time() - inicio_basico
 
-    # Medir desempenho da versão otimizada
     inicio_otimizado = time.time()
-    _, lucro_otimizado = calcular_lucro_otimizado(destinos, conexoes, entregas)  # Pegamos apenas o lucro
+    _, lucro_otimizado = calcular_lucro_otimizado(destinos, conexoes, entregas)  
     tempo_otimizado = time.time() - inicio_otimizado
 
-    # Preparar os dados para o gráfico
     labels = ['Básico', 'Otimizado']
     tempos = [tempo_basico, tempo_otimizado]
-    lucros = [lucro_basico, lucro_otimizado]  # Certificar que os lucros são valores numéricos
+    lucros = [lucro_basico, lucro_otimizado]  
 
-    # Gráfico de comparação de desempenho
     fig, ax1 = plt.subplots()
 
     ax1.set_xlabel('Versão')

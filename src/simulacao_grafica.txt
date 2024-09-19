@@ -1,0 +1,18 @@
+-- Simulação Gráfica --
+
+Exemplo 01
+matriz de conexões
+[[0, 5, 0, 2], [5, 0, 3, 0], [0, 3, 0, 8], [2, 0, 8, 0]]
+
+lista de entregas
+[(0, 'B', 1), (5, 'C', 10), (10, 'D', 8)]
+
+
+Exemplo 02
+matriz de conexões
+[[0, 2, 0, 9], [2, 0, 4, 0], [0, 4, 0, 7], [9, 0, 7, 0]]
+
+lista de entregas
+[(0, 'B', 3), (2, 'C', 10), (9, 'D', 6)]
+
+

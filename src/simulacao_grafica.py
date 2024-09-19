@@ -1,90 +1,60 @@
-import matplotlib.pyplot as plt
-import ipywidgets as widgets
-from IPython.display import display
+import tkinter as tk
+from tkinter import messagebox
 import numpy as np
+import matplotlib.pyplot as plt
+from leilao_basico import calcular_lucro_basico
+from leilao_otimizado import calcular_lucro_otimizado
 
-# Função para calcular o lucro (pode ser o básico ou otimizado)
-def calcular_lucro(destinos, conexoes, entregas):
-    local_atual = "A"
-    tempo_atual = 0
-    lucro_total = 0
-    entregas_realizadas = []
-
-    for entrega in entregas:
-        tempo_inicio, destino, bonus = entrega
-        idx_atual = destinos.index(local_atual)
-        idx_destino = destinos.index(destino)
-
-        tempo_deslocamento = conexoes[idx_atual][idx_destino] * 2
-        
-        if tempo_atual + tempo_deslocamento <= tempo_inicio:
-            lucro_total += bonus
-            tempo_atual += tempo_deslocamento
-            entregas_realizadas.append((tempo_inicio, destino, bonus))
-            local_atual = destino
+def plotar_graficos(lucro_basico, lucro_otimizado):
+    labels = ['Versão Básica', 'Versão Otimizada']
+    lucros = [lucro_basico, lucro_otimizado]
     
-    return entregas_realizadas, lucro_total
+    fig, ax1 = plt.subplots()
 
-# Função para atualizar o gráfico com base nos parâmetros ajustados
-def atualizar_simulacao(bonus_B, bonus_C, bonus_D, tempo_inicio_B, tempo_inicio_C, tempo_inicio_D):
-    destinos = ['A', 'B', 'C', 'D']
-    conexoes = [
-        [0, 5, 0, 2],
-        [5, 0, 3, 0],
-        [0, 3, 0, 8],
-        [2, 0, 8, 0]
-    ]
+    ax1.bar(labels, lucros, color='blue', label='Lucro Obtido')
+    ax1.set_ylabel('Lucro', color='blue')
+    ax1.set_title('Comparação de Lucros entre Versões')
 
-    entregas = [
-        (tempo_inicio_B, 'B', bonus_B),
-        (tempo_inicio_C, 'C', bonus_C),
-        (tempo_inicio_D, 'D', bonus_D)
-    ]
+    plt.show()
 
-    entregas_realizadas, lucro = calcular_lucro(destinos, conexoes, entregas)
+def executar_simulacao():
+    conexao_input = conexao_entry.get()
+    entrega_input = entrega_entry.get()
 
-    # Limpar o gráfico anterior
-    ax.clear()
+    matriz_conexoes = np.array(eval(conexao_input))  
+    entregas = eval(entrega_input)  
 
-    # Exibir as entregas realizadas
-    tempos = [entrega[0] for entrega in entregas_realizadas]
-    destinos_realizados = [entrega[1] for entrega in entregas_realizadas]
-    lucros = [entrega[2] for entrega in entregas_realizadas]
+    destinos = ["A", "B", "C", "D"]  
+    lucro_basico, _ = calcular_lucro_basico(destinos, matriz_conexoes, entregas)
+    lucro_otimizado, _ = calcular_lucro_otimizado(destinos, matriz_conexoes, entregas)
 
-    # Criar o gráfico
-    ax.bar(destinos_realizados, lucros, color='blue')
-    ax.set_xlabel('Destino')
-    ax.set_ylabel('Bônus')
-    ax.set_title(f'Lucro Total: {lucro}')
+    if isinstance(lucro_basico, list):
+        lucro_basico = sum([bonus for _, _, bonus in lucro_basico]) 
+    if isinstance(lucro_otimizado, list):
+        lucro_otimizado = sum([bonus for _, _, bonus in lucro_otimizado])
 
-    # Redesenhar o gráfico
-    plt.draw()
+    resultado_texto = f"Lucro esperado (básico): {lucro_basico}\nLucro esperado (otimizado): {lucro_otimizado}"
+    messagebox.showinfo("Resultados", resultado_texto)
 
-# Criar os controles interativos (sliders)
-bonus_B_slider = widgets.IntSlider(value=1, min=0, max=20, step=1, description='Bônus B')
-bonus_C_slider = widgets.IntSlider(value=10, min=0, max=20, step=1, description='Bônus C')
-bonus_D_slider = widgets.IntSlider(value=8, min=0, max=20, step=1, description='Bônus D')
+    plotar_graficos(lucro_basico, lucro_otimizado)
 
-tempo_B_slider = widgets.IntSlider(value=0, min=0, max=20, step=1, description='Início B')
-tempo_C_slider = widgets.IntSlider(value=5, min=0, max=20, step=1, description='Início C')
-tempo_D_slider = widgets.IntSlider(value=10, min=0, max=20, step=1, description='Início D')
+root = tk.Tk()
+root.title("Simulação Gráfica do Leilão de Entregas")
 
-# Criar a área de plotagem
-fig, ax = plt.subplots()
+label_titulo = tk.Label(root, text="Simulação do Leilão de Entregas", font=("Arial", 16))
+label_titulo.pack(pady=10)
 
-# Criar uma função de callback que será chamada sempre que os sliders forem modificados
-widgets.interactive_output(atualizar_simulacao, {
-    'bonus_B': bonus_B_slider,
-    'bonus_C': bonus_C_slider,
-    'bonus_D': bonus_D_slider,
-    'tempo_inicio_B': tempo_B_slider,
-    'tempo_inicio_C': tempo_C_slider,
-    'tempo_inicio_D': tempo_D_slider
-})
+conexao_label = tk.Label(root, text="Matriz de Conexões (Formato: [[0, 5, 0, 2], [5, 0, 3, 0], ...]):")
+conexao_label.pack()
+conexao_entry = tk.Entry(root, width=50)
+conexao_entry.pack()
 
-# Exibir os sliders e o gráfico
-display(bonus_B_slider, bonus_C_slider, bonus_D_slider, tempo_B_slider, tempo_C_slider, tempo_D_slider)
+entrega_label = tk.Label(root, text="Lista de Entregas (Formato: [(0, 'B', 1), (5, 'C', 10), (10, 'D', 8)]):")
+entrega_label.pack()
+entrega_entry = tk.Entry(root, width=50)
+entrega_entry.pack()
 
-# Mostrar o gráfico inicial
-atualizar_simulacao(1, 10, 8, 0, 5, 10)
-plt.show()
+btn_executar = tk.Button(root, text="Executar Simulação", command=executar_simulacao, font=("Arial", 14))
+btn_executar.pack(pady=20)
+
+root.mainloop()
