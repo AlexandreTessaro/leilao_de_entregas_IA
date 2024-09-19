@@ -1,6 +1,8 @@
 import heapq
 import itertools
 
+# esse algoritmo é uma variação da busca A (A-star)
+
 def calcular_lucro_otimizado(destinos, matriz_conexoes, entregas):
     def custo_estimado(estado):
         if estado["entregas_restantes"]:
